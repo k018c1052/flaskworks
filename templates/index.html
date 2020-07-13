@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="jp">
+<head>
+    <meta charset="UTF-8">
+    <title>sample</title>
+</head>
+<body>
+    <h1>{{ title1 }}</h1>
+    <h1>{{ obj['title2'] }}</h1>
+    <h1>{{num}} は
+        {% if num % 2 == 0 %}
+            偶数</h1>
+        {% else %}
+            奇数</h1>
+        {% endif %}
+    <ul>
+        {% for item1 in list1 %}
+            <li>{{item1}}</li>
+        {% endfor %}
+    </ul>
+    <ul>
+        {% for key in list2 %}
+        <li>{{key}} {{list2[key]}}</li>
+        {% endfor %}
+    </ul>
+    <h1>{{message}}</h1>
+</body>
+</html>
