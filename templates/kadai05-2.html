@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="jp">
+<head>
+    <meta charset="UTF-8">
+    <title>課題05-2</title>
+</head>
+<body>
+    <form method="POST" >
+        <p>入力歩数：<input type="text" name="walk" id="walk"></p>
+        <input type="submit" value="送信">
+    </form>
+    <p>-----------------------------------------------------</p>
+    {% if nwalk != '' %}
+        <ul>{% for item in list %}
+            <li>{{item}}</li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <ul>{% for item in list %}
+            <li>{{item}}</li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+</body>
+</html>
