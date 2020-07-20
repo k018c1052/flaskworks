@@ -10,8 +10,8 @@
         <input type="submit" value="送信">
     </form>
     <p>-----------------------------------------------------</p>
-    <h1>平均歩数：{{count}}</h1>
     {% if nwalk != '' %}
+    <h1>平均歩数：{{count}}</h1>
     <ul>{% for item in list %}
         <li>{{item}}</li>
         {% endfor %}
