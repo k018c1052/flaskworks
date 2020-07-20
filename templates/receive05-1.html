@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html lang="jp">
+<head>
+    <meta charset="UTF-8">
+    <title>sample</title>
+</head>
+<body>
+    {% if uname != '' and email != '' %}
+    <h1>{{ uname }}：{{email}}を受け取りました</h1>
+    {% else %}
+    <h1>入力エラー</h1>
+    {% endif %}
+</body>
+</html>
