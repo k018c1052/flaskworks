@@ -1,0 +1,12 @@
+<!DOCTYPE html>
+<html lang="jp">
+<head>
+    <meta charset="UTF-8">
+    <title>画像sample</title>
+</head>
+<body>
+    {% for file in files %}
+        <img src="./static/uploads/{{file}}" width="200" height="200">
+    {% endfor %}
+</body>
+</html>
