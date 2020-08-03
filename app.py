@@ -1,7 +1,7 @@
 from flask import Flask, render_template, request, redirect
 import mysql.connector as db
 
-db_pram = {
+db_param = {
     'user' : 'mysql',
     'host' : 'localhost',
     'password': '',
@@ -12,7 +12,7 @@ app = Flask(__name__)
 
 @app.route('/')
 def index():
-    conn = db.connect(**db_pram)
+    conn = db.connect(**db_param)
     cur = conn.cursor()
     stmt = 'SELECT * FROM books'
     cur.execute(stmt)
@@ -26,10 +26,23 @@ def send():
     price = request.form.get('price')
     if title == "" or price == "":
         return redirect('/')
-    conn = db.connect(**db_pram)
+    conn = db.connect(**db_param)
     cur = conn.cursor()
     stmt = 'INSERT INTO books(title, price) VALUES(%s, %s)'
     cur.execute(stmt, (title, int(price)))
+    conn.commit()
+    cur.close()
+    conn.close()
+    return redirect('/')
+
+@app.route('/delete', methods=['POST'])
+def delete():
+    del_list = request.form.getlist('del_list')
+    conn = db.connect(**db_param)
+    cur = conn.cursor()
+    stmt = 'DELETE FROM books WHERE id=%s'
+    for id in del_list:
+        cur.execute(stmt, (id,))
     conn.commit()
     cur.close()
     conn.close()
