@@ -1,5 +1,6 @@
 from flask import Flask, render_template, request, redirect
 import mysql.connector as db
+import datetime
 
 db_param = {
     'user': 'mysql',
@@ -23,33 +24,28 @@ def index():
 
 @app.route('/send', methods=['POST'])
 def send():
-    print(request.files)
+    ndate = datetime.datetime.now().strftime('%Y-%m-%d %H:%M')
     title = request.form.get('title')
-    price = request.form.get('price')
-    image = request.files['img_file']
-    if title == "" or price == "" or image == "":
+    if title == "":
         return redirect('/')
-
-    if image and allowed_file(image.filename):
-        image.save('static/uploads/' + image.filename)
 
     conn = db.connect(**db_param)
     cur = conn.cursor()
-
     stmt = 'SELECT * FROM list WHERE title=%s'
     cur.execute(stmt, (title,))
     rows = cur.fetchall()
-    if len(rows) == 0:
-        cur.execute('INSERT INTO list(title, price, image) VALUES(%s, %s, %s)',
-                    (title, int(price), image.filename))
+    print(title)
+    if title in ',':
+        t_list = title.split(',')
+        for item in t_list:
+            cur.execute('INSERT INTO list(date, title) VALUES(%s, %s)',
+                    (ndate, item))
     else:
-        cur.execute('UPDATE list SET price=%s, image=%s WHERE title=%s',
-                    (int(price), image.filename, title))
+        cur.execute('INSERT INTO list(date, title) VALUES(%s, %s)', (ndate, title))
     conn.commit()
     cur.close()
     conn.close()
     return redirect('/')
-
 
 @app.route('/delete', methods=['POST'])
 def delete():
@@ -60,37 +56,12 @@ def delete():
         stmt = 'SELECT * FROM list WHERE id=%s'
         cur.execute(stmt, (id,))
         rows = cur.fetchall()
-        os.remove('./static/uploads/' + rows[0][3])
         stmt = 'DELETE FROM list WHERE id=%s'
         cur.execute(stmt, (id,))
     conn.commit()
     cur.close()
     conn.close()
     return redirect('/')
-
-
-@app.route('/data', methods=['GET'])
-def data():
-    keyword = request.args.get('keyword')
-    conn = db.connect(**db_param)
-    cur = conn.cursor()
-    if keyword and keyword != "":
-        stmt = 'SELECT * FROM list WHERE title LIKE %s'
-        cur.execute(stmt, ('%'+keyword+'%',))
-    else:
-        stmt = 'SELECT * FROM list'
-        cur.execute(stmt)
-
-    rows = cur.fetchall()
-    url = 'http://127.0.0.1:5000/static/uploads/'
-    data = []
-    for id, title, price, image in rows:
-        data.append({'id': id, 'title': title,
-                     'price': price, 'image': url+image})
-    ret = '{"result":' + json.dumps(data) + '}'
-
-    return ret
-
 
 if __name__ == "__main__":
     app.debug = True
