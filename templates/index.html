@@ -5,12 +5,12 @@
     <title>sample</title>
 </head>
 <body>
-    <form action="/send" method="post">
+    <form action="/send" method="post" enctype="multipart/form-data">
         <label for="title">タイトル</label>
         <input type="text" name="title" id="title">
         <label for="title">価格</label>
         <input type="number" name="price" id="price">
-        <label for="title">画像</label>
+        <label for="img_file">画像</label>
         <input type="file" name="img_file" id="img_file">
         <input type="submit" value="送信">
     </form>
