@@ -34,9 +34,9 @@ def send():
     stmt = 'SELECT * FROM list WHERE title=%s'
     cur.execute(stmt, (title,))
     rows = cur.fetchall()
-    print(title)
-    if title in ',':
+    if ',' in title or ' ' in title:
         t_list = title.split(',')
+        t_list = title.split(' ')
         for item in t_list:
             cur.execute('INSERT INTO list(date, title) VALUES(%s, %s)',
                     (ndate, item))
