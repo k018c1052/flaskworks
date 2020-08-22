@@ -42,7 +42,7 @@ def login():
 @app.route('/logout')
 def logout():
     session.pop('name', None)
-    return render_template('last_task_2.html')
+    return redirect('/')
 
 @app.route('/new')
 def new():
