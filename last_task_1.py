@@ -1,6 +1,6 @@
 from flask import Flask, render_template, request, redirect
 import mysql.connector as db
-import datetime
+import datetime, re
 
 db_param = {
     'user': 'mysql',
@@ -24,7 +24,7 @@ def index():
 
 @app.route('/send', methods=['POST'])
 def send():
-    ndate = datetime.datetime.now().strftime('%Y-%m-%d %H:%M')
+    ndate = datetime.datetime.now().strftime('%y-%m-%d %H:%M')
     title = request.form.get('title')
     if title == "":
         return redirect('/')
@@ -34,9 +34,8 @@ def send():
     stmt = 'SELECT * FROM list WHERE title=%s'
     cur.execute(stmt, (title,))
     rows = cur.fetchall()
-    if ',' in title or ' ' in title:
-        t_list = title.split(',')
-        t_list = title.split(' ')
+    if ',' in title or '、' in title:
+        t_list = re.split('[,、]', title)
         for item in t_list:
             cur.execute('INSERT INTO list(date, title) VALUES(%s, %s)',
                     (ndate, item))
