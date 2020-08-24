@@ -2,13 +2,6 @@ from flask import Flask, render_template, request, redirect, session
 import mysql.connector as db
 import os, datetime, re
 
-userdb_param = {
-    'user': 'mysql',
-    'host': 'localhost',
-    'password': '',
-    'database': 'userdb'
-}
-
 utododb_param = {
     'user': 'mysql',
     'host': 'localhost',
@@ -38,9 +31,9 @@ def login():
     if request.form.get('user') and request.form.get('pw'):
         uname = request.form.get('user')
         pw = request.form.get('pw')
-        conn = db.connect(**userdb_param)
+        conn = db.connect(**utododb_param)
         cur = conn.cursor()
-        stmt = 'SELECT * FROM list WHERE id=%s'
+        stmt = 'SELECT * FROM users WHERE id=%s'
         cur.execute(stmt, (uname,))
         rows = cur.fetchall()
 
@@ -67,14 +60,14 @@ def new_login():
     if request.form.get('newuser') and request.form.get('npw'):
         new_user = request.form.get('newuser')
         new_pw = request.form.get('npw')
-        conn = db.connect(**userdb_param)
+        conn = db.connect(**utododb_param)
         cur = conn.cursor()
-        stmt = 'SELECT * FROM list WHERE id=%s'
+        stmt = 'SELECT * FROM users WHERE id=%s'
         cur.execute(stmt, (new_user,))
         rows = cur.fetchall()
 
         if len(rows) == 0:
-            cur.execute('INSERT INTO list(id, pw) VALUES(%s, %s)',
+            cur.execute('INSERT INTO users(id, pw) VALUES(%s, %s)',
                         (new_user, new_pw))
         else:
             for item in rows[0]:
@@ -82,7 +75,7 @@ def new_login():
                     return redirect('/new')
                 else:
                     cur.execute(
-                        'INSERT INTO list(id, pw) VALUES(%s, %s)', (new_user, new_pw))
+                        'INSERT INTO users(id, pw) VALUES(%s, %s)', (new_user, new_pw))
 
         conn.commit()
         cur.close()
@@ -105,18 +98,14 @@ def send():
     stmt = 'SELECT * FROM list WHERE user=%s'
     cur.execute(stmt, (li_user,))
     rows = cur.fetchall()
-    if len(rows) == 0:
+    if ',' in title or '、' in title:
+        t_list = re.split('[,、]', title)
+        for item in t_list:
+            cur.execute('INSERT INTO list(date, title, user) VALUES(%s, %s, %s)',
+                        (ndate, item, li_user))
+    else:
         cur.execute('INSERT INTO list(date, title, user) VALUES(%s, %s, %s)',
                     (ndate, title, li_user))
-    else:
-        if ',' in title or '、' in title:
-            t_list = re.split('[,、]', title)
-            for item in t_list:
-                cur.execute('INSERT INTO list(date, title, user) VALUES(%s, %s, %s)',
-                            (ndate, item, li_user))
-        else:
-            cur.execute('INSERT INTO list(date, title, user) VALUES(%s, %s, %s)',
-                        (ndate, title, li_user))
     conn.commit()
     cur.close()
     conn.close()
