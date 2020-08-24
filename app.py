@@ -1,6 +1,6 @@
-from flask import Flask, render_template, request, redirect
+from flask import Flask, render_template, request, redirect, jsonify
 import mysql.connector as db
-import os, json
+import os
 
 db_param = {
     'user' : 'mysql',
@@ -88,8 +88,7 @@ def data():
     data = []
     for id, title, price, image in rows:
         data.append({'id':id, 'title':title, 'price':price, 'image':url+image})
-    ret = '{"result":' + json.dumps(data) + '}'
-
+    ret = jsonify({"result":data})
     return ret
 
 if __name__ == "__main__":
